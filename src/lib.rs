@@ -1,6 +1,6 @@
 use std::{
-    sync::{mpsc,Arc,Mutex}, 
-    thread
+    sync::{mpsc, Arc, Mutex},
+    thread,
 };
 
 pub struct ThreadPool {
@@ -12,11 +12,11 @@ type Job = Box<dyn FnOnce() + Send + 'static>;
 
 impl ThreadPool {
     /// Create a new ThreadPool.
-    /// 
+    ///
     /// The size is the number of threads in the pool
-    /// 
+    ///
     /// # Panics
-    /// 
+    ///
     /// The 'new' function will panic if the size is zero.
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
@@ -28,13 +28,12 @@ impl ThreadPool {
         let mut workers = Vec::with_capacity(size);
 
         for id in 0..size {
-
             workers.push(Worker::new(id, Arc::clone(&receiver)));
         }
 
-        ThreadPool { 
-            workers, 
-            sender: Some(sender), 
+        ThreadPool {
+            workers,
+            sender: Some(sender),
         }
     }
 
@@ -78,15 +77,15 @@ impl Worker {
                     println!("Worker {id} got a job; executing.");
 
                     job();
-                },
+                }
                 Err(_) => {
                     println!("Worker {id} disconnected; shutting down.");
                     break;
                 }
             }
         });
-        Worker { 
-            id, 
+        Worker {
+            id,
             thread: Some(thread),
         }
     }
